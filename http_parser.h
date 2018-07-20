@@ -85,9 +85,15 @@ typedef struct http_parser_settings http_parser_settings;
  * many times for each string. E.G. you might get 10 callbacks for "on_url"
  * each providing just a few characters more data.
  */
-typedef int (*http_data_cb) (http_parser*, const char *at, size_t length);
-typedef int (*http_cb) (http_parser*);
+#if __cplusplus >= 201103L
+  #include <functional>
 
+  typedef std::function<int(http_parser*, const char*, size_t)> http_data_cb;
+  typedef std::function<int(http_parser*)> http_cb;
+#else
+  typedef int (*http_data_cb) (http_parser*, const char *at, size_t length);
+  typedef int (*http_cb) (http_parser*);
+#endif
 
 /* Status Codes */
 #define HTTP_STATUS_MAP(XX)                                                 \
